@@ -1,35 +1,72 @@
 import pandas as pd
-import tkinter as tk
-from tkinter import scrolledtext
+import warnings  # Import the warnings module
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
-# Function to compute the 'Analysis' column based on feature presence
+# Load the dataset into a DataFrame
+data = pd.read_csv("C:\\Users\\63929\\Desktop\\Anti-KIDS\\V1\\scan_results.csv")
+print(data.columns)
+
+# Define a function to compute the 'Analysis' column based on feature presence
 def compute_analysis(row):
     if row['Keyboard Inputs'] or row['Programs Detected'] or row['Commands'] or row['Links']:
         return 'Malicious'
     else:
         return 'Not Malicious'
 
-# Create the main tkinter window
-root = tk.Tk()
-root.title("Results")
+# Create a new column 'Analysis' based on the function
+data['Analysis'] = data.apply(compute_analysis, axis=1)
 
-# Create a scrolled text widget to display results
-results_text = scrolledtext.ScrolledText(root, width=50, height=20)
-results_text.pack()
+# Split the data into features (X) and target (y)
+X = data[['Keyboard Inputs', 'Programs Detected', 'Commands', 'Links']]
+y = data['Analysis']
 
-# Load the dataset into a DataFrame
-data = pd.read_csv("C:\\Users\\63929\\Desktop\\Anti-KIDS\\V1\\scan_results.csv")
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Get the most recent row (last row) from the DataFrame
-latest_row = data.iloc[-1]
+# Train a Naive Bayes classifier
+classifier = MultinomialNB()
+classifier.fit(X_train, y_train)
 
-# Compute the 'Analysis' for the latest row
-analysis_result = compute_analysis(latest_row)
+# Make predictions on the test set
+y_pred = classifier.predict(X_test)
 
-# Display the result in the GUI
-results_text.insert(tk.END, f"Latest USB Device: {latest_row['USB Device']}\n")
-results_text.insert(tk.END, f"Analysis Result: {analysis_result}\n")
-results_text.insert(tk.END, "-" * 20 + "\n")
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
 
-# Start the tkinter main loop
-root.mainloop()
+# Suppress all warnings
+warnings.filterwarnings('ignore')
+
+# Print classification report without warnings
+print(classification_report(y_test, y_pred))
+
+# Create a confusion matrix
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+# Print the confusion matrix
+print("Confusion Matrix:")
+print(conf_matrix)
+
+# Calculate True Positives, True Negatives, False Positives, and False Negatives
+tn, fp, fn, tp = conf_matrix.ravel()
+
+# Print these values
+print(f"True Negatives: {tn}")
+print(f"False Positives: {fp}")
+print(f"False Negatives: {fn}")
+print(f"True Positives: {tp}")
+
+
+# Assuming you have already trained your classifier and have X_test data
+#y_pred_proba = classifier.predict_proba(X_test)[:, 1]
+
+# Printing the results
+#for i, prob in enumerate(y_pred_proba):
+#    print(f"Sample {i + 1}: Probability of being malicious = {prob:.4f}")
+
+# Print the devices and their predicted labels and probabilities
+results = data[['USB Device', 'Analysis']]
+print(results)
