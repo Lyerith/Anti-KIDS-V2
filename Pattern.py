@@ -224,5 +224,4 @@ if __name__ == "__main__":
             append_csv(csv_filename, most_recent_file)
             
             print(f"Data appended to CSV file '{csv_filename}'")
-            Bayes_file()
             
