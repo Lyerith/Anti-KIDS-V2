@@ -38,23 +38,13 @@ def main():
         new_usb_drives = [drive for drive in current_usb_drives if drive not in all_usb_drives]
 
         if new_hid_devices or new_usb_drives:
-            print("USB Devices Added:")
-            print("=" * 50)
             for serial in new_hid_devices:
-                print(f"HID Device Serial Number: {serial}")
-                print("-" * 50)
-                # block_common_keys()  # Call the function to block keys
-                subprocess.call(["python", "ActDetect.py", f"{serial}"])
-                subprocess.call(["python", "Pattern.py"])
+                subprocess.call(["python", "Notification.py", f"{serial}"])
+                
 
             for drive in new_usb_drives:
-                print(f"Mass Storage Device: {drive}")
                 label = get_volume_name(drive)
-                print(f"Volume Name: {label}")
-                print("-" * 50)
-                # block_common_keys()  # Call the function to block keys
-                subprocess.call(["python", "ActDetect.py", f"{label}"])
-                subprocess.call(["python", "Pattern.py"])
+                subprocess.call(["python", "Notification.py", f"{label}"])
 
         all_hid_device_serials = current_hid_device_serials
         all_usb_drives = current_usb_drives
