@@ -24,7 +24,7 @@ X = data[['Keyboard Inputs', 'Programs Detected', 'Commands', 'Links']]
 y = data['Analysis']
 
 # Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
 # Train a Naive Bayes classifier
 classifier = MultinomialNB()
@@ -69,4 +69,5 @@ print(f"True Positives: {tp}")
 
 # Print the devices and their predicted labels and probabilities
 results = data[['USB Device', 'Analysis']]
+
 print(results)
